@@ -1,0 +1,1 @@
+# idea-gwt-navigator-plugin
