@@ -14,6 +14,7 @@
     <li>Jump from com.foo.<b>server</b>.MyService<b>Impl</b>  to com.foo.<b>client</b>.MyService and com.foo.<b>client.MyService<b>Async</b></li>
     </ul>
 
+    <img src="https://raw.githubusercontent.com/markiewb/idea-gwt-navigator-plugin/master/doc/screenshot1.png"/>
     ]]></description>
 
     <change-notes><![CDATA[
