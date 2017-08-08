@@ -1,17 +1,23 @@
-<idea-plugin>
-    <id>com.your.company.unique.plugin.id</id>
-    <name>Plugin display name here</name>
+<idea-plugin version="2">
+    <id>de.markiewb.idea.gwtnavigator</id>
+    <name>Navigator extension for Google Web Toolkit</name>
     <version>1.0</version>
-    <vendor email="support@yourcompany.com" url="http://www.yourcompany.com">YourCompany</vendor>
+    <vendor url="https://github.com/markiewb/idea-gwt-navigator-plugin">markiewb</vendor>
 
     <description><![CDATA[
-      Enter short description for your plugin here.<br>
-      <em>most HTML tags may be used</em>
+    You can jump between GWT services using the "Related Symbol..." action.
+    <br>
+    It allows you to
+    <ul>
+    <li>Jump from com.foo.<b>client</b>.MyService             to com.foo.<b>client</b>.MyService<b>Async</b> and com.foo.<b>server</b>.MyService<b>Impl</b></li>
+    <li>Jump from com.foo.<b>client</b>.MyService<b>Async</b> to com.foo.<b>client</b>.MyService and com.foo.<b>server.MyService<b>Impl</b></li>
+    <li>Jump from com.foo.<b>server</b>.MyService<b>Impl</b>  to com.foo.<b>client</b>.MyService and com.foo.<b>client.MyService<b>Async</b></li>
+    </ul>
+
     ]]></description>
 
     <change-notes><![CDATA[
-      Add change nots here.<br>`
-      <em>most HTML tags may be used</em>
+    1.0: Initial version - jump to files (regardless which method is currently active)
     ]]>
     </change-notes>
 
@@ -26,7 +32,7 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
-        <gotoRelatedProvider implementation="de.markiewb.idea.gwtnavigator.GWTServiceRelatedProvider"/>
+        <gotoRelatedProvider implementation="de.markiewb.idea.gwtnavigator.GWTServiceGotoRelatedProvider"/>
     </extensions>
 
     <actions>
