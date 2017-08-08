@@ -129,96 +129,54 @@ public class GWTServiceRelatedProvider extends GotoRelatedProvider {
 
     @Nullable
     private String serverToClient(String name) {
-        if (name.endsWith("Impl.java")) {
-            String substring = name.substring(0, name.length() - "Impl.java".length());
-            return substring;
-        }
-        return null;
+        return replaceEnd(name, "Impl.java", "");
+
     }
 
     @Nullable
     private String serverToClientAsync(String name) {
-        if (name.endsWith("Impl.java")) {
-            String substring = name.substring(0, name.length() - "Impl.java".length());
-            return substring + "Async";
+        return replaceEnd(name, "Impl.java", "Async");
+    }
+
+    @Nullable
+    private String replaceEnd(String name, String oldSuffix, String newSuffix) {
+        String plain = removeFromEnd(name, oldSuffix);
+        if (plain != null) {
+            return plain + newSuffix;
+        }
+        return null;
+    }
+
+    private String removeFromEnd(String name, String suffix) {
+        if (name.endsWith(suffix)) {
+            return name.substring(0, name.length() - suffix.length());
         }
         return null;
     }
 
     @Nullable
     private String clientToServer(String name) {
-        if (name.endsWith(".java")) {
-            String substring = name.substring(0, name.length() - ".java".length());
-            return substring + "Impl";
-        }
-        return null;
+        return replaceEnd(name, ".java", "Impl");
+
     }
 
     @Nullable
     private String clientAsyncToServer(String name) {
-        if (name.endsWith("Async.java")) {
-            String substring = name.substring(0, name.length() - "Async.java".length());
-            return substring + "Impl";
-        }
-        return null;
+        return replaceEnd(name, "Async.java", "Impl");
+
     }
 
     @Nullable
     private String clientAsyncToClient(String name) {
-        if (name.endsWith("Async.java")) {
-            String substring = name.substring(0, name.length() - "Async.java".length());
-            return substring;
-        }
-        return null;
+        return replaceEnd(name, "Async.java", "");
+
     }
 
     @Nullable
     private String clientToClientAsync(String name) {
-        if (name.endsWith(".java")) {
-            String substring = name.substring(0, name.length() - ".java".length());
-            return substring + "Async";
-        }
-        return null;
+        return replaceEnd(name, ".java", "As`ync");
+
     }
 
 
-//    @NotNull
-//    @Override
-//    public List<? extends GotoRelatedItem> getItems(@NotNull DataContext context) {
-//
-//        Project project = context.getData(CommonDataKeys.PROJECT);
-//        //Settings settings = ServiceManager.getService(project, Settings.class);
-//
-//        PsiFile file = context.getData(CommonDataKeys.PSI_FILE);
-//
-//        String fileName = file.getVirtualFile().getName();
-//
-//        //String remoteFileName = settings.getTomcatPath() + "/WEB-INF/classes/com/company/beanconfigs/" + fileName;
-//        String remoteFileName ="";
-//        VirtualFile virtualFile = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(new File(remoteFileName));
-//        if (virtualFile != null) {
-//
-//            PsiFile remoteFile = PsiManager.getInstance(project).findFile(virtualFile);
-////            ContentDiffRequest req = DiffRequestFactory.getInstance().createFromFiles(project, file1, file2);
-////            DiffManager.getInstance().showDiff(project, req);
-//
-//            List<GotoRelatedItem> items = new ArrayList<>();
-////            items.addAll(GotoRelatedItem.createItems(Arrays.asList(remoteFile), "Remote file"));
-//            items.add(new GotoRelatedItem(remoteFile) {
-//                @Override
-//                public void navigate() {
-//                    ContentDiffRequest req = DiffRequestFactory.getInstance().createFromFiles(project, file.getVirtualFile(), remoteFile.getVirtualFile());
-//                    DiffManager.getInstance().showDiff(project, req);
-//                }
-//
-//                @Nullable
-//                @Override
-//                public String getCustomName() {
-//                    return "Diff remote " + remoteFile.getName();
-//                }
-//            });
-//            return items;
-//        }
-//        return Collections.emptyList();
-//
 }
