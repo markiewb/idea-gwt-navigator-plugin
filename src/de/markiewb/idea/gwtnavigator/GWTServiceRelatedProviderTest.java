@@ -7,26 +7,23 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ * Tested with sample project: https://github.com/jgonian/GWT-maven-GPE-sample
+ */
 public class GWTServiceRelatedProviderTest {
     @Test
     public void fromClient() {
         assertEquals(Arrays.asList("com.example.client.GreetingServiceAsync", "com.example.server.GreetingServiceImpl"), execute("com.example.client.GreetingService"));
-
-
     }
 
     @Test
     public void fromClientAsync() {
         assertEquals(Arrays.asList("com.example.client.GreetingService", "com.example.server.GreetingServiceImpl"), execute("com.example.client.GreetingServiceAsync"));
-
-
     }
 
     @Test
     public void fromServerImpl() {
         assertEquals(Arrays.asList("com.example.client.GreetingService", "com.example.client.GreetingServiceAsync"), execute("com.example.server.GreetingServiceImpl"));
-
-
     }
 
 
@@ -40,7 +37,7 @@ public class GWTServiceRelatedProviderTest {
         //com.example.client.GreetingService.java
         List<String> candidates = sut.getCandidates(packageName, className + ".java");
         candidates.sort(String::compareTo);
-        
+
 
         return candidates;
     }

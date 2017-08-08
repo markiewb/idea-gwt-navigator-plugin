@@ -26,7 +26,6 @@ public class GWTServiceRelatedProvider extends GotoRelatedProvider {
 
 
         Project project = psiElement.getProject();
-//        Settings settings = ServiceManager.getService(project, Settings.class);
         try {
 
             PsiJavaFileImpl original = (PsiJavaFileImpl) psiElement.getContainingFile();
@@ -35,17 +34,11 @@ public class GWTServiceRelatedProvider extends GotoRelatedProvider {
 
 
             List<PsiElement> list = create(project, packageName, name);
-//            String tomcatPathFromSettings = settings.getTomcatPath();
-//            PsiFile fileA = PsiManager.getInstance(project).findFile(LocalFileSystem.getInstance().refreshAndFindFileByIoFile(new File("/test.txt")));
-//            PsiFile fileB = PsiManager.getInstance(project).findFile(LocalFileSystem.getInstance().refreshAndFindFileByIoFile(new File("/rebel.xml")));
-
-
-            return GotoRelatedItem.createItems(list, "group");
+            return GotoRelatedItem.createItems(list, "Google Web Toolkit");
 
         } catch (Exception e) {
             return Collections.emptyList();
         }
-//        return GotoRelatedItem.createItems(Arrays.asList(psiElement, psiElement), "group");
     }
 
     @NotNull
@@ -67,16 +60,12 @@ public class GWTServiceRelatedProvider extends GotoRelatedProvider {
             //client.Service -> server.ServiceImpl
             String clientToServer = clientToServer(name);
             if (clientToServer != null) {
-
-                String fqn = packageName.substring(0, packageName.length() - ".client".length()) + ".server" + "." + clientToServer;
-                candidates.add(fqn);
+                candidates.add(replaceWithinPackageName(packageName, ".client", ".server", clientToServer));
             }
             //client.Service -> client.ServiceAsync
             String clientToClientAsync = clientToClientAsync(name);
             if (clientToClientAsync != null) {
-
-                String fqn = packageName.substring(0, packageName.length() - ".client".length()) + ".client" + "." + clientToClientAsync;
-                candidates.add(fqn);
+                candidates.add(replaceWithinPackageName(packageName, ".client", ".client", clientToClientAsync));
             }
 
         }
@@ -86,16 +75,12 @@ public class GWTServiceRelatedProvider extends GotoRelatedProvider {
 
             String clientAsyncToServer = clientAsyncToServer(name);
             if (clientAsyncToServer != null) {
-
-                String fqn = packageName.substring(0, packageName.length() - ".client".length()) + ".server" + "." + clientAsyncToServer;
-                candidates.add(fqn);
+                candidates.add(replaceWithinPackageName(packageName, ".client", ".server", clientAsyncToServer));
             }
             //client.ServiceAsync -> client.Service
             String clientAsyncToClient = clientAsyncToClient(name);
             if (clientAsyncToClient != null) {
-
-                String fqn = packageName.substring(0, packageName.length() - ".client".length()) + ".client" + "." + clientAsyncToClient;
-                candidates.add(fqn);
+                candidates.add(replaceWithinPackageName(packageName, ".client", ".client", clientAsyncToClient));
             }
 
         }
@@ -104,20 +89,23 @@ public class GWTServiceRelatedProvider extends GotoRelatedProvider {
             String serverToClient = serverToClient(name);
             if (serverToClient != null) {
 
-                String fqn = packageName.substring(0, packageName.length() - ".server".length()) + ".client" + "." + serverToClient;
-                candidates.add(fqn);
+                candidates.add(replaceWithinPackageName(packageName, ".server", ".client", serverToClient));
             }
             //service.ServiceImpl -> client.ServiceAsync
             String serverToClientAsync = serverToClientAsync(name);
             if (serverToClientAsync != null) {
 
-                String fqn = packageName.substring(0, packageName.length() - ".server".length()) + ".client" + "." + serverToClientAsync;
-                candidates.add(fqn);
+                candidates.add(replaceWithinPackageName(packageName, ".server", ".client", serverToClientAsync));
 
             }
 
         }
         return candidates;
+    }
+
+    @NotNull
+    private String replaceWithinPackageName(String packageName, String from, String to, String className) {
+        return packageName.substring(0, packageName.length() - from.length()) + to + "." + className;
     }
 
     private void findAndAdd(List<PsiElement> list, Project project, String fqn) {
@@ -157,7 +145,6 @@ public class GWTServiceRelatedProvider extends GotoRelatedProvider {
     @Nullable
     private String clientToServer(String name) {
         return replaceEnd(name, ".java", "Impl");
-
     }
 
     @Nullable
@@ -174,7 +161,7 @@ public class GWTServiceRelatedProvider extends GotoRelatedProvider {
 
     @Nullable
     private String clientToClientAsync(String name) {
-        return replaceEnd(name, ".java", "As`ync");
+        return replaceEnd(name, ".java", "Async");
 
     }
 

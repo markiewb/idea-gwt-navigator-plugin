@@ -230,8 +230,10 @@
     <option name="actions">
       <set>
         <option value="activate" />
+        <option value="noActionIfCompileErrors" />
         <option value="organizeImports" />
         <option value="reformat" />
+        <option value="rearrange" />
         <option value="finalPrivateMethod" />
         <option value="unnecessarySemicolon" />
         <option value="missingOverrideAnnotation" />
