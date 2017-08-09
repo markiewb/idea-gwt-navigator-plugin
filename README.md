@@ -8,5 +8,13 @@ It allows you to
     <li>Jump from com.foo.<b>client</b>.MyService<b>Async</b> to com.foo.<b>client</b>.MyService and com.foo.<b>server</b>.MyService<b>Impl</b></li>
     <li>Jump from com.foo.<b>server</b>.MyService<b>Impl</b>  to com.foo.<b>client</b>.MyService and com.foo.<b>client</b>.MyService<b>Async</b></li>
 </ul>
+If the caret is within a method, then you can jump from/to the related async/impl method.
 
 <img src="https://raw.githubusercontent.com/markiewb/idea-gwt-navigator-plugin/master/doc/screenshot1.png"/>
+<img src="https://raw.githubusercontent.com/markiewb/idea-gwt-navigator-plugin/master/doc/screenshot2.png"/>
+
+Changelog:
+<ul>
+<li> 1.1: Jump from/to corresponding async/impl method</li>
+<li> 1.0: Initial version - jump to files (regardless which method is currently active)</li>
+</ul>
