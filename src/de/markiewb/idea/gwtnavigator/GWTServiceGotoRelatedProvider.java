@@ -25,6 +25,7 @@ import com.intellij.psi.util.MethodSignature;
 import com.intellij.psi.util.MethodSignatureUtil;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -88,7 +89,8 @@ public class GWTServiceGotoRelatedProvider extends GotoRelatedProvider {
         }
     }
 
-    private PsiType[] removeAsyncCallback(PsiType[] parameterTypes, Project project) {
+    @NotNull
+    private PsiType[] removeAsyncCallback(PsiType[] parameterTypes, @NotNull Project project) {
         List<PsiType> psiTypes = Arrays.asList(parameterTypes);
         if (psiTypes.size() >= 1) {
 
@@ -102,24 +104,26 @@ public class GWTServiceGotoRelatedProvider extends GotoRelatedProvider {
     }
 
     @NotNull
-    private List<PsiClass> createItems(Project project, List<String> fqns) {
+    private List<PsiClass> createItems(@NotNull Project project, @NotNull List<String> fqns) {
 
         List<PsiClass> list = new ArrayList<>();
         for (String fqn : fqns) {
 
-            list.addAll(findAndAdd(project, fqn));
+            list.addAll(findClassesByFQN(project, fqn));
         }
         return list;
     }
 
-    private String removeFromEnd(String name, String suffix) {
+    @Nullable
+    private String removeFromEnd(@NotNull String name, @NotNull String suffix) {
         if (name.endsWith(suffix)) {
             return name.substring(0, name.length() - suffix.length());
         }
         return null;
     }
 
-    private List<PsiClass> findAndAdd(Project project, String fqn) {
+    @NotNull
+    private List<PsiClass> findClassesByFQN(@NotNull Project project, @NotNull String fqn) {
         List<PsiClass> list = new ArrayList<>();
 
         PsiClass[] classes = JavaPsiFacade.getInstance(project).findClasses(fqn, GlobalSearchScope.allScope(project));
