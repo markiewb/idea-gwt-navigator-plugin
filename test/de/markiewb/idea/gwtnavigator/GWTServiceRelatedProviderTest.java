@@ -32,15 +32,24 @@ public class GWTServiceRelatedProviderTest {
     }
 
     @Test
+    public void fromIClient() {
+        assertEquals(Arrays.asList("com.example.client.IGreetingServiceAsync", "com.example.server.GreetingServiceImpl", "com.example.server.IGreetingServiceImpl"), execute("com.example.client.IGreetingService"));
+    }
+
+    @Test
     public void fromClientAsync() {
         assertEquals(Arrays.asList("com.example.client.GreetingService", "com.example.server.GreetingServiceImpl"), execute("com.example.client.GreetingServiceAsync"));
     }
 
     @Test
-    public void fromServerImpl() {
-        assertEquals(Arrays.asList("com.example.client.GreetingService", "com.example.client.GreetingServiceAsync"), execute("com.example.server.GreetingServiceImpl"));
+    public void fromIClientAsync() {
+        assertEquals(Arrays.asList("com.example.client.IGreetingService", "com.example.server.GreetingServiceImpl", "com.example.server.IGreetingServiceImpl"), execute("com.example.client.IGreetingServiceAsync"));
     }
 
+    @Test
+    public void fromServerImpl() {
+        assertEquals(Arrays.asList("com.example.client.GreetingService", "com.example.client.GreetingServiceAsync", "com.example.client.IGreetingService", "com.example.client.IGreetingServiceAsync"), execute("com.example.server.GreetingServiceImpl"));
+    }
 
     private List<String> execute(String fqn) {
         GWTServiceRelatedProvider sut = new GWTServiceRelatedProvider();

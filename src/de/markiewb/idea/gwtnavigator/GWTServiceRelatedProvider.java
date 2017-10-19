@@ -35,7 +35,17 @@ class GWTServiceRelatedProvider {
                 candidates.add(replaceWithinPackageName(packageName, ".client", ".server", clientToServer));
             }
 
-            //client.Service -> client.ServiceAsync
+            //client.IService -> server.ServiceImpl
+            if (name.length() >= 2 && name.startsWith("I") && Character.isUpperCase(name.charAt(1))) {
+                String nameWithoutIPrefix = name.substring(1);
+                String iclientToServer = replaceEnd(nameWithoutIPrefix, "", "Impl");
+                if (iclientToServer != null) {
+                    candidates.add(replaceWithinPackageName(packageName, ".client", ".server", iclientToServer));
+                }
+            }
+
+            //client.Service  -> client.ServiceAsync
+            //client.IService -> client.IServiceAsync
             String clientToClientAsync = replaceEnd(name, "", "Async");
             if (clientToClientAsync != null) {
                 candidates.add(replaceWithinPackageName(packageName, ".client", ".client", clientToClientAsync));
@@ -50,7 +60,18 @@ class GWTServiceRelatedProvider {
                 candidates.add(replaceWithinPackageName(packageName, ".client", ".server", clientAsyncToServer));
             }
 
+            //client.IServiceAsync -> server.ServiceImpl
+            if (name.length() >= 2 && name.startsWith("I") && Character.isUpperCase(name.charAt(1))) {
+                String nameWithoutIPrefix = name.substring(1);
+
+                String iclientAsyncToServer = replaceEnd(nameWithoutIPrefix, "Async", "Impl");
+                if (iclientAsyncToServer != null) {
+                    candidates.add(replaceWithinPackageName(packageName, ".client", ".server", iclientAsyncToServer));
+                }
+            }
+
             //client.ServiceAsync -> client.Service
+            //client.IServiceAsync -> client.IService
             String clientAsyncToClient = replaceEnd(name, "Async", "");
             if (clientAsyncToClient != null) {
                 candidates.add(replaceWithinPackageName(packageName, ".client", ".client", clientAsyncToClient));
@@ -60,16 +81,19 @@ class GWTServiceRelatedProvider {
         if (packageName.endsWith(".server")) {
 
             //service.ServiceImpl -> client.Service
+            //service.ServiceImpl -> client.IService
             String serverToClient = replaceEnd(name, "Impl", "");
             if (serverToClient != null) {
-
                 candidates.add(replaceWithinPackageName(packageName, ".server", ".client", serverToClient));
+                candidates.add(replaceWithinPackageName(packageName, ".server", ".client", "I" + serverToClient));
             }
 
             //service.ServiceImpl -> client.ServiceAsync
+            //service.ServiceImpl -> client.IServiceAsync
             String serverToClientAsync = replaceEnd(name, "Impl", "Async");
             if (serverToClientAsync != null) {
                 candidates.add(replaceWithinPackageName(packageName, ".server", ".client", serverToClientAsync));
+                candidates.add(replaceWithinPackageName(packageName, ".server", ".client", "I" + serverToClientAsync));
             }
 
         }
