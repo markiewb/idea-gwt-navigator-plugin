@@ -1,6 +1,8 @@
 # idea-gwt-navigator-plugin
     
 You can jump between GWT services using the "Related Symbol..." action.
+Compatible to the IntelliJ IDEA Community Edition.
+
 <br>
 It allows you to
 <ul>
@@ -15,6 +17,7 @@ If the caret is within a method, then you can jump from/to the related async/imp
 
 Changelog:
 <ul>
+<li> 2.0: Detect more variants (by use of type information) #2</li>
 <li> 1.2: Jump from/to IMyService(Async) to MyServiceImpl</li>
 <li> 1.1: Jump from/to corresponding async/impl method</li>
 <li> 1.0: Initial version - jump to files (regardless which method is currently active)</li>
