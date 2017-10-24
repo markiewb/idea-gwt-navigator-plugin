@@ -17,6 +17,7 @@ If the caret is within a method, then you can jump from/to the related async/imp
 
 Changelog:
 <ul>
+<li> 2.1: Fixed: Non-RemoteServlet-Implementation not found #3</li>
 <li> 2.0: Detect more variants (by use of type information) #2</li>
 <li> 1.2: Jump from/to IMyService(Async) to MyServiceImpl</li>
 <li> 1.1: Jump from/to corresponding async/impl method</li>

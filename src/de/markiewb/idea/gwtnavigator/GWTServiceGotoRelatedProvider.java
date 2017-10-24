@@ -28,7 +28,6 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
@@ -60,7 +59,6 @@ public class GWTServiceGotoRelatedProvider extends GotoRelatedProvider {
      *  Ergebnis = Helper (Async2Sync) und Async aus Ergebnis entfernen
      *
      * falls Impl
-     *  wird com.google.gwt.user.server.rpc.RemoteServiceServlet implementiert? (nicht rekursiv)
      *  Ergebnis = Helper (alleImplementiertenInterfacesDerKlasse) und Impl aus Ergebnis entfernen
      *
      *
@@ -141,18 +139,14 @@ public class GWTServiceGotoRelatedProvider extends GotoRelatedProvider {
     }
 
     private Collection<? extends PsiClass> getRelatedTypesForGWTImpl(Project project, PsiClass currentClass) {
-        // wird com.google.gwt.user.server.rpc.RemoteServiceServlet implementiert? (rekursiv)
         // Ergebnis = Helper (alleImplementiertenInterfacesDerKlasse) und Impl aus Ergebnis entfernen
 
         if (!currentClass.isInterface()) {
-            PsiClass[] supers = currentClass.getSupers();
-            boolean isRemoteServiceServlet = stream(supers).anyMatch(x -> "com.google.gwt.user.server.rpc.RemoteServiceServlet".equals(x.getQualifiedName()));
-            if (isRemoteServiceServlet) {
-                Set<PsiClass> results = new LinkedHashSet<>();
+            Set<PsiClass> results = new LinkedHashSet<>();
 
-                stream(currentClass.getInterfaces()).forEach(x -> results.addAll(getRelatedTypesForGWTSyncInterface(project, x)));
-                return results;
-            }
+            PSIHelper.getInterfacesRecursive(project, currentClass) //
+                    .stream().forEach(x -> results.addAll(getRelatedTypesForGWTSyncInterface(project, x)));
+            return results;
         }
         return emptySet();
 
@@ -196,22 +190,13 @@ public class GWTServiceGotoRelatedProvider extends GotoRelatedProvider {
                 results.addAll(PSIHelper.findPsiClassByFQN(project, asyncQualifiedName));
 
                 // Wenn ja, dann alle Implementationen (Typ Klasse) des Interfaces finden -> Impl gefunden
-                Collection<PsiClass> all = ClassInheritorsSearch.search(currentClass, GlobalSearchScope.projectScope(project), true).findAll();
-                // aber nur die wirklichen Servlets
-
-                List<PsiClass> onlyServletImpls = all.stream().filter(this::isRemoteServlet).collect(Collectors.toList());
-
-                results.addAll(onlyServletImpls);
+                Collection<PsiClass> allImpl = ClassInheritorsSearch.search(currentClass, GlobalSearchScope.projectScope(project), true).findAll();
+                results.addAll(allImpl);
                 return results;
             }
         }
         return emptySet();
     }
-
-    private boolean isRemoteServlet(@NotNull PsiClass x) {
-        return stream(x.getSupers()).anyMatch(superClass -> "com.google.gwt.user.server.rpc.RemoteServiceServlet".equals(superClass.getQualifiedName()));
-    }
-
 
     @NotNull
     private PsiType[] removeAsyncCallback(PsiType[] parameterTypes, @NotNull Project project) {

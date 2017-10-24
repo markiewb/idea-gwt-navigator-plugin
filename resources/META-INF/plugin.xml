@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>de.markiewb.idea.gwtnavigator</id>
     <name>Navigator extension for Google Web Toolkit</name>
-    <version>2.0</version>
+    <version>2.1</version>
     <vendor url="https://github.com/markiewb/idea-gwt-navigator-plugin">markiewb</vendor>
 
     <description><![CDATA[
@@ -21,6 +21,7 @@
 
 Changelog:
 <ul>
+<li> 2.1: Fixed: Non-RemoteServlet-Implementation not found #3</li>
 <li> 2.0: Detect more variants (by use of type information) #2</li>
 <li> 1.2: Jump from/to IMyService(Async) to MyServiceImpl</li>
 <li> 1.1: Jump from/to corresponding async/impl method</li>
@@ -30,7 +31,7 @@ Changelog:
     ]]></description>
 
     <change-notes><![CDATA[
-2.0: Detect more variants (by use of type information) #2
+2.1: Fixed: Non-RemoteServlet-Implementation not found #3
     ]]>
     </change-notes>
 
