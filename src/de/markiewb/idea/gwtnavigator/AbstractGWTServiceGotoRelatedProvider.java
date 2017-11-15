@@ -33,9 +33,8 @@ import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
 import static java.util.Collections.*;
 
-public class GWTServiceGotoRelatedProvider extends GotoRelatedProvider {
-
-
+public abstract class AbstractGWTServiceGotoRelatedProvider extends GotoRelatedProvider
+{
     /**
      * Information about GWT-conventions:
      * <p>
@@ -66,18 +65,22 @@ public class GWTServiceGotoRelatedProvider extends GotoRelatedProvider {
      */
     @NotNull
     @Override
-    public List<? extends GotoRelatedItem> getItems(@NotNull PsiElement psiElement) {
+    public List<? extends GotoRelatedItem> getItems(@NotNull PsiElement psiElement)
+    {
 
         Project project = psiElement.getProject();
-        try {
+        try
+        {
 
-            if (!(psiElement.getContainingFile() instanceof PsiJavaFileImpl)) {
+            if (!(psiElement.getContainingFile() instanceof PsiJavaFileImpl))
+            {
                 return Collections.emptyList();
             }
 
 
             PsiClass currentClass = PsiTreeUtil.getParentOfType(psiElement, PsiClass.class);
-            if (currentClass == null) {
+            if (currentClass == null)
+            {
                 return emptyList();
             }
 
@@ -91,29 +94,40 @@ public class GWTServiceGotoRelatedProvider extends GotoRelatedProvider {
 
 
             List<PsiElement> methods = getCorrespondingMethods(psiElement, project, targetClasses);
-            if (methods.isEmpty()) {
-                return GotoRelatedItem.createItems(targetClasses, "Google Web Toolkit");
-            } else {
-                return GotoRelatedItem.createItems(methods, "Google Web Toolkit");
+            Collection<? extends PsiElement> x;
+            if (methods.isEmpty())
+            {
+                x = targetClasses;
+            } else
+            {
+                x = methods;
             }
+            return getGotoRelatedItems(x);
 
 
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             return Collections.emptyList();
         }
     }
 
+    protected abstract List<? extends GotoRelatedItem> getGotoRelatedItems(Collection<? extends PsiElement> elements);
+
     @NotNull
-    private List<PsiElement> getCorrespondingMethods(@NotNull PsiElement psiElement, @NotNull Project project, @NotNull Set<PsiClass> targetClasses) {
+    private List<PsiElement> getCorrespondingMethods(@NotNull PsiElement psiElement, @NotNull Project project, @NotNull Set<PsiClass> targetClasses)
+    {
         PsiMethod surroundingMethod = PsiTreeUtil.getParentOfType(psiElement, PsiMethod.class);
-        if (surroundingMethod != null) {
+        if (surroundingMethod != null)
+        {
             List<PsiElement> result = new ArrayList<>();
             //method has been selected, so jump to related method
-            for (PsiClass aClass : targetClasses) {
+            for (PsiClass aClass : targetClasses)
+            {
                 List<PsiMethod> psiMethods = asList(aClass.getMethods());
 
                 boolean foundMethod = false;
-                for (PsiMethod psiMethod : psiMethods) {
+                for (PsiMethod psiMethod : psiMethods)
+                {
 
                     MethodSignature sigNew = psiMethod.getSignature(PsiSubstitutor.EMPTY);
                     MethodSignature sigOrig = surroundingMethod.getSignature(PsiSubstitutor.EMPTY);
@@ -121,27 +135,32 @@ public class GWTServiceGotoRelatedProvider extends GotoRelatedProvider {
                     //compare for same signature but without last AsyncCallBack parameter greet(String) with greet(String, AsyncCallback)
                     MethodSignature sigNewWithoutAsync = MethodSignatureUtil.createMethodSignature(sigNew.getName(), removeAsyncCallback(sigNew.getParameterTypes(), project), sigNew.getTypeParameters(), sigNew.getSubstitutor());
                     MethodSignature sigOrigWithoutAsync = MethodSignatureUtil.createMethodSignature(sigOrig.getName(), removeAsyncCallback(sigOrig.getParameterTypes(), project), sigOrig.getTypeParameters(), sigOrig.getSubstitutor());
-                    if (MethodSignatureUtil.areSignaturesEqual(sigNewWithoutAsync, sigOrigWithoutAsync)) {
+                    if (MethodSignatureUtil.areSignaturesEqual(sigNewWithoutAsync, sigOrigWithoutAsync))
+                    {
                         result.add(psiMethod);
                         foundMethod = true;
                         break;
                     }
                 }
-                if (!foundMethod) {
+                if (!foundMethod)
+                {
                     result.add(aClass);
                 }
             }
             return result;
-        } else {
+        } else
+        {
             //no method has been selected, so jump to file
             return new ArrayList<>(targetClasses);
         }
     }
 
-    private Collection<? extends PsiClass> getRelatedTypesForGWTImpl(Project project, PsiClass currentClass) {
+    private Collection<? extends PsiClass> getRelatedTypesForGWTImpl(Project project, PsiClass currentClass)
+    {
         // Ergebnis = Helper (alleImplementiertenInterfacesDerKlasse) und Impl aus Ergebnis entfernen
 
-        if (!currentClass.isInterface()) {
+        if (!currentClass.isInterface())
+        {
             Set<PsiClass> results = new LinkedHashSet<>();
 
             PSIHelper.getInterfacesRecursive(project, currentClass) //
@@ -153,19 +172,23 @@ public class GWTServiceGotoRelatedProvider extends GotoRelatedProvider {
     }
 
     @NotNull
-    private Set<PsiClass> getRelatedTypesForGWTASyncInterface(@NotNull Project project, @NotNull PsiClass currentClass) {
+    private Set<PsiClass> getRelatedTypesForGWTASyncInterface(@NotNull Project project, @NotNull PsiClass currentClass)
+    {
 
         //      falls AsyncInterface
         //        Das sync-Interface im gleichen Package suchen
         //        Ergebnis = Helper (Async2Sync) und Async aus Ergebnis entfernen
 
-        if (currentClass.isInterface()) {
+        if (currentClass.isInterface())
+        {
             String qualifiedName = currentClass.getQualifiedName() != null ? currentClass.getQualifiedName() : "";
-            if (qualifiedName.endsWith("Async")) {
+            if (qualifiedName.endsWith("Async"))
+            {
                 String syncQualifiedName = StringHelper.replaceEnd(qualifiedName, "Async", "");
 
                 Set<PsiClass> result = new LinkedHashSet<>();
-                for (PsiClass syncInterface : PSIHelper.findPsiClassByFQN(project, singleton(syncQualifiedName))) {
+                for (PsiClass syncInterface : PSIHelper.findPsiClassByFQN(project, singleton(syncQualifiedName)))
+                {
                     result.addAll(getRelatedTypesForGWTSyncInterface(project, syncInterface));
                 }
                 return result;
@@ -175,11 +198,14 @@ public class GWTServiceGotoRelatedProvider extends GotoRelatedProvider {
     }
 
     @NotNull
-    private Set<PsiClass> getRelatedTypesForGWTSyncInterface(@NotNull Project project, @NotNull PsiClass currentClass) {
-        if (currentClass.isInterface()) {
+    private Set<PsiClass> getRelatedTypesForGWTSyncInterface(@NotNull Project project, @NotNull PsiClass currentClass)
+    {
+        if (currentClass.isInterface())
+        {
             PsiClass[] interfaces = currentClass.getInterfaces();
             boolean isRemoteServiceInterface = stream(interfaces).anyMatch(x -> "com.google.gwt.user.client.rpc.RemoteService".equals(x.getQualifiedName()));
-            if (isRemoteServiceInterface) {
+            if (isRemoteServiceInterface)
+            {
                 Set<PsiClass> results = new LinkedHashSet<>();
                 // Wird Typ com.google.gwt.user.client.rpc.RemoteService extended? (nicht rekursiv, RemoteService nicht selbst) -
                 // Wenn ja, -> Interface gefunden
@@ -199,18 +225,19 @@ public class GWTServiceGotoRelatedProvider extends GotoRelatedProvider {
     }
 
     @NotNull
-    private PsiType[] removeAsyncCallback(PsiType[] parameterTypes, @NotNull Project project) {
+    private PsiType[] removeAsyncCallback(PsiType[] parameterTypes, @NotNull Project project)
+    {
         List<PsiType> psiTypes = asList(parameterTypes);
-        if (psiTypes.size() >= 1) {
+        if (psiTypes.size() >= 1)
+        {
 
             PsiType last = psiTypes.get(psiTypes.size() - 1);
             PsiClassType typeByName = PsiType.getTypeByName("com.google.gwt.user.client.rpc.AsyncCallback", project, GlobalSearchScope.allScope(project));
-            if (last.isAssignableFrom(typeByName)) {
+            if (last.isAssignableFrom(typeByName))
+            {
                 return psiTypes.subList(0, psiTypes.size() - 1).toArray(new PsiType[0]);
             }
         }
         return parameterTypes;
     }
-
-
 }

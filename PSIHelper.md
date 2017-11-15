@@ -11,4 +11,5 @@ See also `PSIHelper`
        PsiNavigateUtil.
        InheritanceUtil
        Collection<PsiClass> all = ClassInheritorsSearch.search(currentClass).findAll();
+       ProjectFileIndex.SERVICE.getInstance(project).isInTestSourceContent(x.getContainingFile().getVirtualFile())
 
