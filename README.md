@@ -17,6 +17,7 @@ If the caret is within/on a method, then you can jump from/to the related async/
 <br>
 Changelog:
 <ul>
+<li> 2.2.1: Fixed compatibility warnings from JetBrains #5</li>
 <li> 2.2: Fixed: Group results by prod and test source roots #4</li>
 <li> 2.1: Fixed: Non-RemoteServlet-Implementation not found #3</li>
 <li> 2.0: Detect more variants (by use of type information) #2</li>
